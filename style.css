@@ -338,9 +338,35 @@ body{
         bottom: 10px;
     }
 
-    .video {
+    .vdoti {
+        background-color: #fff;
+        width: 200px;
+        margin: 20px auto 0px auto;
+        /* margin-left: 132px ; */
+        padding: 10px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .qrcode {
+        display: flex;
+        justify-content:center;
+        align-items: center; 
+        flex-wrap: wrap;
         margin: 0px auto;
-        width: 1000px;
+        
+    }
+
+    .vdoli {
+        background-color: #fff;
+        color: #fff;
+        width: 200px;
+        margin: 0px auto 10px auto;
+        /* margin-left: 132px ; */
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        position: relative;
+        bottom: 10px;
     }
 
     .Sra {
