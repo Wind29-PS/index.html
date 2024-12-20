@@ -8,7 +8,7 @@
 }
 body{
     /* background-image: url("img/BG.png"); */
-    background-image: url("BG.jpg");
+    background-image: url("img/BG.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -243,9 +243,9 @@ body{
 /* My Active */
 
 .act {
-    background-color: #fff;  
+    background-color: #ffffff;  
     /* text-align: center; */
-    padding: 20px;
+    padding:10px 20px;
     font-weight: 500;
     text-transform:uppercase ;
     position: fixed;
@@ -292,9 +292,11 @@ body{
     border-radius: 10px;
     padding-top: 10px;
 
-    a{
+    
+
+    .name{
         margin: 10px;
-        font-size: 24px;
+        font-size: 28px;
     }
 
     p {
