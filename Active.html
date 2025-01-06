@@ -16,9 +16,9 @@
         <div class="skip">
         <a href="#Monkey Book" >Monkey Book</a>
         <a href="#COCONUT CANNON" >COCONUT CANNON</a>
-        <a href="#Fish" >Fish</a>
+        <a href="#Fisherman FriendX" >Fish</a>
         <a href="#Robot Arm" >Robot Arm</a>
-        <a href="#Spaghetti Tower" >Spaghetti Tower</a>
+        <a href="#Certificate" >Certificate</a>
         </div>
         
     </div>
@@ -3274,13 +3274,194 @@ if(mouseX>-10 && mouseY>100 && mouseX<90 && mouseY<200){
     .
   </div>
 
-  <a id="Fish"></a> 
+    <a id="Fisherman FriendX"></a> 
   <br><br>
-  <p class="name">Fish</p>
+  <p class="name">Fisherman FriendX</p>
   
   <p>
-
+    เป็นโครงงานที่จัดทำขึ้นมาเพื่อแบ่งเบาภาระให้ชาวประมงหรือเพาะปลาเลี้ยง ซึ่งคือ 
+    เครื่องจับปลาแบบอัตโนมัติ โดยการใส่เหยื่อจับปลาจะปล่อยอาหารปลาอัตโนมัติโดย servo motor
+    เพื่อใช้เป็นเหยื่อ และจะมีตะข่ายด้านล่างจะถูกดึงขึ้นด้วย motor เพื่อจับปลา ใช้ปุ่มกด
+    เพื่อสั่งการให้เริ่มการทำงานของเครื่องจับปลาให้เปลี่ยนสถานะ และมีไฟ LED บอกสถานะ
+    มีสองสถานะ คือ เริ่มการทำงานระบบอัตโนมัติ และหยุดการทำงาน 
   </p>
+
+  
+    <p>
+      อุปกรณ์
+      <div class="EQ">
+        <ul>
+          <li>
+            Arduino Uno R3
+          </li>
+          <li>
+            IBT-2 BTS7960
+          </li>
+          <li>
+            servo motor 
+          </li>
+          <li>
+            motor 12 v 
+          </li>
+          <li>
+            รางถ่าน 12 v 
+          </li>
+          <li>
+            LED 2 ตัว
+          </li>
+          <li>
+            ปุ่มกด 1 ปุ่ม
+          </li>
+          <li>
+            สายจัมเปอร์
+          </li>
+          <li>
+            ท่อ PVC
+          </li>
+          <li>
+            แผ่นอะคริลิค
+          </li>
+          <li>
+            กล่องใช้เป็นทุ่นให้ลอยน้ำ
+          </li>
+        </ul>
+      </div>
+      
+    </p>
+  
+  
+  <div class="codeti">
+    Script (Arduino UNO)
+  </div>
+
+  <pre class="code">
+    //ขาสัญญาณ PWM สำหรับควบคุมมอเตอร์
+    #define RPWM 5
+    #define LPWM 6
+    
+    #include <Servo.h> // include the Servo library
+    
+    Servo feeding ;
+    
+    int servo_pin = 10 ;
+    int botton_pin = 12 ;
+    int LED0_pin = 8 ; // reset mode
+    int LED1_pin = 9 ; // start mode
+    // int LED2_pin = 8 ; // servo2
+    
+    int delayreset = 0 ;
+    int delaystart = 0 ;
+    int mode ;
+    boolean reset ;
+    boolean start ;
+    
+    void setup() {
+      // put your setup code here, to run once:
+      
+      Serial.begin(9600);
+      
+      pinMode(botton_pin, INPUT_PULLUP);
+      pinMode(LED0_pin, OUTPUT );
+      pinMode(LED1_pin, OUTPUT );
+    
+      pinMode(RPWM, OUTPUT);
+      pinMode(LPWM, OUTPUT);
+    
+      feeding.attach(servo_pin);
+    
+      // สั่งให้มอเตอร์หยุด
+      analogWrite(RPWM, 0);
+      analogWrite(LPWM, 0);
+    
+      reset = true ;
+      start = false ;
+    
+    }
+    
+    void loop() {
+      // put your main code here, to run repeatedly:
+      Serial.print("mode : ");
+      Serial.println(mode);
+      Serial.println(delayreset);
+      Serial.println(delaystart);
+      // ปุ่ม
+      if(digitalRead(botton_pin) == 0){
+        delay(200);
+        while(digitalRead(botton_pin) == 0){}
+        mode++ ;
+        if( mode > 1 ) {
+          mode = 0 ;
+        }
+      }
+    
+      if(mode == 0) {
+        reset = true ;
+        start = false ;
+    
+      }
+    
+      if(reset == true) {
+        digitalWrite(LED0_pin, HIGH);
+        digitalWrite(LED1_pin, LOW);
+        feeding.write(90);
+        delayreset += 1 ;
+        delaystart = 0 ;
+    
+        // if (delayreset >= 500 && delayreset <=1000) {
+        //   digitalWrite(LPWM, LOW);
+        //   for (int i = 0; i < 255; i++) {
+        //     analogWrite(RPWM, i);
+        //     // delay(20);
+        //   }
+        // }
+    
+        // if (delayreset >= 1000) {
+          // feeding.write(90);
+          digitalWrite(RPWM, LOW);
+          digitalWrite(LPWM, LOW);
+        // }
+    
+      }
+    
+      if(mode == 1) {
+        reset = false ;
+        start = true ;
+    
+      }
+    
+      if(start == true) {
+        digitalWrite(LED0_pin, LOW);
+        digitalWrite(LED1_pin, HIGH);
+        delayreset = 0 ;
+        delaystart += 1 ;
+        feeding.write(180);
+    
+        if (delaystart >= 500 && delaystart <=1000) {
+          
+          digitalWrite(RPWM, LOW);
+          for (int i = 0; i < 255; i-=2) {
+            analogWrite(LPWM, i);
+            // delay(20);
+          }
+        }
+    
+        if (delaystart >= 1000) {
+          
+          digitalWrite(RPWM, LOW);
+          digitalWrite(LPWM, LOW);
+          
+          }
+        }
+    
+      }
+    }
+    
+  </pre>
+
+  <div class="codeli">
+    .
+  </div>
+
   
   <a id="Robot Arm"></a>
   <br><br>
@@ -3547,9 +3728,19 @@ if(mouseX>-10 && mouseY>100 && mouseX<90 && mouseY<200){
     .
   </div>
 
-  <a id="Spaghetti Tower"></a> 
+<a id="Certificate"></a> 
   <br><br>
-  <p class="name">Spaghetti Tower</p>
+  <p class="name">Certificate</p>
+  <div class="certificate">
+    <img src="cer1.png" alt="">
+    <img src="cer2.png" alt="">
+    <img src="cer1.png" alt="">
+    <img src="cer3.png" alt="">
+    <img src="cer4.png" alt="">
+    <img src="cer5.png" alt="">
+    <img src="cer6.png" alt="">
+  </div>
+
   
 
 
